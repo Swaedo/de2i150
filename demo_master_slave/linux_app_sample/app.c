@@ -77,7 +77,9 @@ int main(int arc, char* argv[])
         return 1;
     }
     printf("b");
-    FILE * pFile = fopen(argv[1], "rb");
+    FILE * pFile = fopen(argv[1], "r");
+    if (pFile == NULL) 
+        return 1;
     
     //strip image
         printf("1");
