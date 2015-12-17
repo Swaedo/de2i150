@@ -12,16 +12,54 @@
 # or its authorized distributors. Please refer to the applicable 
 # agreement for further details.
 
-# ACDS 13.0sp1 232 linux 2015.04.20.11:04:21
+# ACDS 15.1 185 win32 2015.12.16.19:00:36
 
 # ----------------------------------------
 # vcs - auto-generated simulation script
 
 # ----------------------------------------
+# This script can be used to simulate the following IP:
+#     amm_master_qsys_with_pcie
+# To create a top-level simulation script which compiles other
+# IP, and manages other system issues, copy the following template
+# and adapt it to your needs:
+# 
+# # Start of template
+# # If the copied and modified template file is "vcs_sim.sh", run it as:
+# #   ./vcs_sim.sh
+# #
+# # Override the top-level name
+# # specify a command file containing elaboration options 
+# # (system verilog extension, and compile the top-level).
+# # Override the user-defined sim options, so the simulation 
+# # runs forever (until $finish()).
+# source vcs_setup.sh \
+# TOP_LEVEL_NAME=top \
+# USER_DEFINED_ELAB_OPTIONS="'-f ../../../synopsys_vcs.f'" \
+# USER_DEFINED_SIM_OPTIONS=""
+# 
+# # helper file: synopsys_vcs.f
+# +systemverilogext+.sv
+# ../../../top.sv
+# # End of template
+# ----------------------------------------
+# If amm_master_qsys_with_pcie is one of several IP cores in your
+# Quartus project, you can generate a simulation script
+# suitable for inclusion in your top-level simulation
+# script by running the following command line:
+# 
+# ip-setup-simulation --quartus-project=<quartus project>
+# 
+# ip-setup-simulation will discover the Altera IP
+# within the Quartus project, and generate a unified
+# script which supports all the Altera IP within the design.
+# ----------------------------------------
+# ACDS 15.1 185 win32 2015.12.16.19:00:36
+# ----------------------------------------
 # initialize variables
 TOP_LEVEL_NAME="amm_master_qsys_with_pcie"
 QSYS_SIMDIR="./../../"
-QUARTUS_INSTALL_DIR="/package/eda/altera/altera13.0sp1/quartus/"
+QUARTUS_INSTALL_DIR="C:/altera_lite/15.1/quartus/"
 SKIP_FILE_COPY=0
 SKIP_ELAB=0
 SKIP_SIM=0
@@ -41,9 +79,19 @@ for expression in "$@"; do
 done
 
 # ----------------------------------------
+# initialize simulation properties - DO NOT MODIFY!
+ELAB_OPTIONS=""
+SIM_OPTIONS=""
+if [[ `vcs -platform` != *"amd64"* ]]; then
+  :
+else
+  :
+fi
+
+# ----------------------------------------
 # copy RAM/ROM files to simulation directory
 
-vcs -lca -timescale=1ps/1ps -sverilog +verilog2001ext+.v -ntb_opts dtm $USER_DEFINED_ELAB_OPTIONS \
+vcs -lca -timescale=1ps/1ps -sverilog +verilog2001ext+.v -ntb_opts dtm $ELAB_OPTIONS $USER_DEFINED_ELAB_OPTIONS \
   -v $QUARTUS_INSTALL_DIR/eda/sim_lib/altera_primitives.v \
   -v $QUARTUS_INSTALL_DIR/eda/sim_lib/220model.v \
   -v $QUARTUS_INSTALL_DIR/eda/sim_lib/sgate.v \
@@ -52,6 +100,60 @@ vcs -lca -timescale=1ps/1ps -sverilog +verilog2001ext+.v -ntb_opts dtm $USER_DEF
   -v $QUARTUS_INSTALL_DIR/eda/sim_lib/cycloneiv_hssi_atoms.v \
   -v $QUARTUS_INSTALL_DIR/eda/sim_lib/cycloneiv_pcie_hip_atoms.v \
   -v $QUARTUS_INSTALL_DIR/eda/sim_lib/cycloneiv_atoms.v \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_avalon_st_adapter_001_error_adapter_0.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_avalon_st_adapter_error_adapter_0.sv \
+  $QSYS_SIMDIR/submodules/altera_merlin_arbitrator.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_2_rsp_mux.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_2_rsp_demux.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_2_cmd_mux.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_2_cmd_demux.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_2_router_001.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_2_router.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_1_rsp_mux.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_1_rsp_demux.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_1_cmd_mux.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_1_cmd_demux.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_1_router_001.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_1_router.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_avalon_st_adapter_001.v \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_avalon_st_adapter.v \
+  $QSYS_SIMDIR/submodules/altera_avalon_st_handshake_clock_crosser.v \
+  $QSYS_SIMDIR/submodules/altera_avalon_st_clock_crosser.v \
+  $QSYS_SIMDIR/submodules/altera_avalon_st_pipeline_base.v \
+  $QSYS_SIMDIR/submodules/altera_std_synchronizer_nocut.v \
+  $QSYS_SIMDIR/submodules/altera_merlin_width_adapter.sv \
+  $QSYS_SIMDIR/submodules/altera_merlin_address_alignment.sv \
+  $QSYS_SIMDIR/submodules/altera_merlin_burst_uncompressor.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_rsp_mux_001.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_rsp_mux.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_rsp_demux_001.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_rsp_demux.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_cmd_mux_001.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_cmd_mux.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_cmd_demux_003.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_cmd_demux_002.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_cmd_demux_001.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_cmd_demux.sv \
+  $QSYS_SIMDIR/submodules/altera_merlin_burst_adapter.sv \
+  $QSYS_SIMDIR/submodules/altera_merlin_burst_adapter_uncmpr.sv \
+  $QSYS_SIMDIR/submodules/altera_merlin_burst_adapter_13_1.sv \
+  $QSYS_SIMDIR/submodules/altera_merlin_burst_adapter_new.sv \
+  $QSYS_SIMDIR/submodules/altera_incr_burst_converter.sv \
+  $QSYS_SIMDIR/submodules/altera_wrap_burst_converter.sv \
+  $QSYS_SIMDIR/submodules/altera_default_burst_converter.sv \
+  $QSYS_SIMDIR/submodules/altera_avalon_st_pipeline_stage.sv \
+  $QSYS_SIMDIR/submodules/altera_merlin_traffic_limiter.sv \
+  $QSYS_SIMDIR/submodules/altera_merlin_reorder_memory.sv \
+  $QSYS_SIMDIR/submodules/altera_avalon_sc_fifo.v \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_router_006.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_router_005.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_router_003.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_router_001.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0_router.sv \
+  $QSYS_SIMDIR/submodules/altera_merlin_slave_agent.sv \
+  $QSYS_SIMDIR/submodules/altera_merlin_master_agent.sv \
+  $QSYS_SIMDIR/submodules/altera_merlin_slave_translator.sv \
+  $QSYS_SIMDIR/submodules/altera_merlin_master_translator.sv \
   $QSYS_SIMDIR/submodules/altpcie_pipe_interface.v \
   $QSYS_SIMDIR/submodules/altpcie_pcie_reconfig_bridge.v \
   $QSYS_SIMDIR/submodules/altera_pcie_hard_ip_reset_controller.v \
@@ -59,73 +161,23 @@ vcs -lca -timescale=1ps/1ps -sverilog +verilog2001ext+.v -ntb_opts dtm $USER_DEF
   $QSYS_SIMDIR/submodules/altpcie_pll_100_250.v \
   $QSYS_SIMDIR/submodules/altpcie_pll_125_250.v \
   $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_pcie_ip_altgx_internal.vo \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_stif_a2p_addrtrans.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_stif_a2p_fixtrans.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_stif_a2p_vartrans.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_stif_control_register.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_stif_cr_avalon.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_stif_cr_interrupt.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_stif_cr_mailbox.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_stif_p2a_addrtrans.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_stif_reg_fifo.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_stif_rx.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_stif_rx_cntrl.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_stif_rx_resp.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_stif_tx.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_stif_tx_cntrl.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_stif_txavl_cntrl.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_stif_txresp_cntrl.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_stif/altpciexpav_clksync.v \
-  $QSYS_SIMDIR/submodules/synopsys/avalon_lite/altpciexpav_lite_app.v \
   $QSYS_SIMDIR/submodules/altpciexpav_stif_app.v \
   $QSYS_SIMDIR/submodules/altpcie_hip_pipen1b_qsys.v \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_irq_mapper.sv \
-  $QSYS_SIMDIR/submodules/altera_avalon_st_handshake_clock_crosser.v \
-  $QSYS_SIMDIR/submodules/altera_avalon_st_clock_crosser.v \
-  $QSYS_SIMDIR/submodules/altera_avalon_st_pipeline_base.v \
-  $QSYS_SIMDIR/submodules/altera_merlin_width_adapter.sv \
-  $QSYS_SIMDIR/submodules/altera_merlin_address_alignment.sv \
-  $QSYS_SIMDIR/submodules/altera_merlin_burst_uncompressor.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_cmd_xbar_demux_006.sv \
-  $QSYS_SIMDIR/submodules/altera_merlin_arbitrator.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_rsp_xbar_mux_003.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_rsp_xbar_demux_003.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_rsp_xbar_demux_002.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_cmd_xbar_mux_003.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_cmd_xbar_mux_002.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_cmd_xbar_demux_004.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_cmd_xbar_demux_003.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_cmd_xbar_demux_001.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_rsp_xbar_mux.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_rsp_xbar_demux.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_cmd_xbar_demux.sv \
   $QSYS_SIMDIR/submodules/altera_reset_controller.v \
   $QSYS_SIMDIR/submodules/altera_reset_synchronizer.v \
-  $QSYS_SIMDIR/submodules/altera_merlin_burst_adapter.sv \
-  $QSYS_SIMDIR/submodules/altera_merlin_traffic_limiter.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_id_router_004.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_addr_router_006.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_id_router_003.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_id_router_002.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_addr_router_005.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_addr_router_003.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_addr_router_001.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_id_router.sv \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_addr_router.sv \
-  $QSYS_SIMDIR/submodules/altera_avalon_sc_fifo.v \
-  $QSYS_SIMDIR/submodules/altera_merlin_slave_agent.sv \
-  $QSYS_SIMDIR/submodules/altera_merlin_master_agent.sv \
-  $QSYS_SIMDIR/submodules/altera_merlin_slave_translator.sv \
-  $QSYS_SIMDIR/submodules/altera_merlin_master_translator.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_irq_mapper.sv \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_2.v \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_1.v \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_mm_interconnect_0.v \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_sgdma.v \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_sdram.v \
+  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_pcie_ip.v \
   $QSYS_SIMDIR/submodules/custom_master_slave.sv \
   $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_altpll_qsys.vo \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_sdram.v \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_sgdma.v \
-  $QSYS_SIMDIR/submodules/amm_master_qsys_with_pcie_pcie_ip.v \
   $QSYS_SIMDIR/amm_master_qsys_with_pcie.v \
   -top $TOP_LEVEL_NAME
 # ----------------------------------------
 # simulate
 if [ $SKIP_SIM -eq 0 ]; then
-  ./simv $USER_DEFINED_SIM_OPTIONS
+  ./simv $SIM_OPTIONS $USER_DEFINED_SIM_OPTIONS
 fi

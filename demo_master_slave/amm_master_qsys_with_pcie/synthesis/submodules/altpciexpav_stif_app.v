@@ -1,4 +1,4 @@
-// (C) 2001-2013 Altera Corporation. All rights reserved.
+// (C) 2001-2015 Altera Corporation. All rights reserved.
 // Your use of Altera Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
 // files any of the foregoing (including device programming or simulation 
@@ -12,6 +12,10 @@
 
 
 
+
+// synthesis translate_off
+`timescale 1ns / 1ps
+// synthesis translate_on
 module altpciexpav_stif_app
 
 #(   
@@ -24,8 +28,8 @@ module altpciexpav_stif_app
      parameter              CB_PCIE_MODE   = 0,
      parameter              CB_A2P_ADDR_MAP_IS_FIXED = 1,
      parameter  [1023:0]    CB_A2P_ADDR_MAP_FIXED_TABLE = 0,
-     parameter              CB_A2P_ADDR_MAP_NUM_ENTRIES = 1,
-     parameter              CB_A2P_ADDR_MAP_PASS_THRU_BITS = 24,   
+     parameter              CB_A2P_ADDR_MAP_NUM_ENTRIES = 4,
+     parameter              CB_A2P_ADDR_MAP_PASS_THRU_BITS = 22,   
      parameter              CB_P2A_AVALON_ADDR_B0 = 32'h01000000,
      parameter              CB_P2A_AVALON_ADDR_B1 = 32'h00000000,
      parameter              CB_P2A_AVALON_ADDR_B2 = 32'h00000000,
@@ -69,7 +73,9 @@ module altpciexpav_stif_app
      parameter              CB_RXM_DATA_WIDTH = 64,
      parameter              port_type_hwtcl   = "Native endpoint",
      parameter 							AVALON_ADDR_WIDTH = 32,
-     parameter 							BYPASSS_A2P_TRANSLATION = 0
+     parameter 							BYPASSS_A2P_TRANSLATION = 0,
+     parameter              in_cvp_mode_hwtcl = 0,
+     parameter              direct_tlp_enable_hwtcl = 0
      
 
   )  
@@ -226,11 +232,15 @@ output                                 CraWaitRequest_o,
 output                                 CraIrq_o,
   /// MSI/MSI-X supported signals
 output  [81:0]                         MsiIntfc_o,
+output  [15:0]                         MsiControl_o,
 output  [15:0]                         MsixIntfc_o,
 input   [3:0]                          RxIntStatus_i,
 
 input                                  pld_clk_inuse,
-output                                 tx_cons_cred_sel
+output                                 tx_cons_cred_sel,
+input   [4:0]                          ltssm_state,
+input   [1:0]                          current_speed,
+input   [3:0]                          lane_act
 
 /// Parmeter signals
 
@@ -238,6 +248,7 @@ output                                 tx_cons_cred_sel
 
 localparam CG_NUM_A2P_MAILBOX = (CB_P2A_PERF_PROFILE == 3)? 8 : 1;
 localparam CG_NUM_P2A_MAILBOX = (CB_A2P_PERF_PROFILE == 3)? 8 : 1;
+localparam FIXED_ADDRESS_TRANS = (INTENDED_DEVICE_FAMILY == "Stratix IV" ||  INTENDED_DEVICE_FAMILY == "Cyclone IV GX" || INTENDED_DEVICE_FAMILY == "HardCopy IV" || INTENDED_DEVICE_FAMILY == "Arria II GZ" || INTENDED_DEVICE_FAMILY == "Arria II GX" ) ? CB_A2P_ADDR_MAP_IS_FIXED  : 0;
 
 wire                                   rxpndgrd_fifo_empty;
 wire [56:0]                            rxpndgrd_fifo_dato;
@@ -270,7 +281,6 @@ reg  [15:0]                              msi_data;
 wire [31:0]															 pcie_intr_ena;
 wire 																		 a2p_mb_wrreq;
 wire [11:0]	 														 a2p_mb_wraddr;
-reg       	 														 tx_st_ready_reg;
 wire      															 cpl_tag_release;
 wire 	  																 atrans_wr_ena;
 wire 	  																 atrans_rdaddr_vld;
@@ -307,8 +317,15 @@ reg   [63:0]  													 msi_addr_reg;
 reg   [15:0]  													 msi_data_reg;  
 wire          													 rxrp_fifo_wrreq;  
 wire [130:0]  													 rxrp_fifo_datain;      
-wire [130:0]  													 txrp_fifo_dataout;
-
+wire [65:0]  								  					 txrp_fifo_dataout;        
+wire                                     tx_cmd_empty;
+wire                                     rxcntrl_sm_idle;
+wire                                     txrp_fifo_rdreq;
+wire                                     txrp_tlp_ready;
+reg  [3:0]                             cfgctl_add_reg;
+reg  [31:0]                            cfgctl_data_reg;
+reg  [3:0]                             lane_act_reg;
+reg  [1:0]                             current_speed_reg;
 /// Tie off the inputs when not available
 
     assign rxm_read_data_valid_0 = RxmReadDataValid_0_i;
@@ -425,6 +442,7 @@ always @(posedge AvlClk_i or negedge rstn_reg)
      end
   end
 
+assign MsiControl_o = msi_ena_reg;
 always @(posedge AvlClk_i or negedge Rstn_i)
   begin
   	if(~Rstn_i)
@@ -442,13 +460,6 @@ always @(posedge AvlClk_i or negedge Rstn_i)
  assign rstn_reg = rstn_rr;
 
 
-always @(posedge AvlClk_i or negedge rstn_reg)
-  begin
-    if(~rstn_reg)
-      tx_st_ready_reg<=1'b0;
-    else
-    tx_st_ready_reg <= TxStReady_i;
- end
 
 /// Instantiate the Rx interface
 
@@ -539,6 +550,7 @@ rx
    .TxRespIdle_i          (tx_resp_idle        ),
    .RxRpFifoWrReq_o       (rxrp_fifo_wrreq     ),  
    .RxRpFifoWrData_o      (rxrp_fifo_datain    ), 
+   .rxcntrl_sm_idle       (rxcntrl_sm_idle     ),
     
     
     .TxReadData_o(TxsReadData_o),
@@ -566,7 +578,7 @@ rx
     .CB_PCIE_MODE(CB_PCIE_MODE),
     .CB_A2P_PERF_PROFILE(CB_A2P_PERF_PROFILE),
     .CB_P2A_PERF_PROFILE(CB_P2A_PERF_PROFILE),
-    .CB_A2P_ADDR_MAP_IS_FIXED(CB_A2P_ADDR_MAP_IS_FIXED),
+    .CB_A2P_ADDR_MAP_IS_FIXED(FIXED_ADDRESS_TRANS),
     .CB_A2P_ADDR_MAP_FIXED_TABLE(CB_A2P_ADDR_MAP_FIXED_TABLE),
     .CB_A2P_ADDR_MAP_NUM_ENTRIES(CB_A2P_ADDR_MAP_NUM_ENTRIES),
     .CB_A2P_ADDR_MAP_PASS_THRU_BITS(CB_A2P_ADDR_MAP_PASS_THRU_BITS),
@@ -575,7 +587,8 @@ rx
     .CB_PCIE_RX_LITE(CB_PCIE_RX_LITE),
     .deviceFamily(INTENDED_DEVICE_FAMILY),
     .BYPASSS_A2P_TRANSLATION(BYPASSS_A2P_TRANSLATION),
-    .AVALON_ADDR_WIDTH(AVALON_ADDR_WIDTH)
+    .AVALON_ADDR_WIDTH(AVALON_ADDR_WIDTH),
+    .in_cvp_mode_hwtcl(in_cvp_mode_hwtcl)
   )
  
  
@@ -653,8 +666,10 @@ rx
      .TxRpFifoRdReq_o(txrp_fifo_rdreq),
      .TxRpFifoData_i(txrp_fifo_dataout),
      .RpTLPReady_i(txrp_tlp_ready),
+     .RpTLPAck_o(txrp_tlp_ack),
      .pld_clk_inuse(pld_clk_inuse),
-     .tx_cons_cred_sel(tx_cons_cred_sel)
+     .tx_cons_cred_sel(tx_cons_cred_sel),
+     .TxBufferEmpty_o(tx_cmd_empty)
      
   );
 
@@ -671,7 +686,8 @@ altpciexpav_stif_control_register
     .CG_NUM_P2A_MAILBOX(CG_NUM_P2A_MAILBOX),
     .CG_ENABLE_A2P_INTERRUPT(CG_ENABLE_A2P_INTERRUPT),
     .CG_RXM_IRQ_NUM(CG_RXM_IRQ_NUM),
-    .port_type_hwtcl(port_type_hwtcl)
+    .port_type_hwtcl(port_type_hwtcl),
+    .direct_tlp_enable_hwtcl(direct_tlp_enable_hwtcl)
 
         )
 cntrl_reg
@@ -723,9 +739,22 @@ cntrl_reg
    .TxRpFifoRdReq_i(txrp_fifo_rdreq),
    .TxRpFifoData_o(txrp_fifo_dataout),
    .RpTLPReady_o(txrp_tlp_ready),
+   .RpTLPAck_i(txrp_tlp_ack),
    .RxRpFifoWrReq_i(rxrp_fifo_wrreq),
    .RxRpFifoWrData_i(rxrp_fifo_datain),
-   .AvalonIrqReq_i({rxrp_fifo_wrreq, RxIntStatus_i})
+   .AvalonIrqReq_i({rxrp_fifo_wrreq, RxIntStatus_i}),
+   .TxBufferEmpty_i(tx_cmd_empty),
+   .ltssm_state(ltssm_state),        
+   .rxcntrl_sm_idle(rxcntrl_sm_idle),
+   
+   .CfgAddr_i(cfgctl_add_reg), 
+   .CfgCtl_i(cfgctl_data_reg),
+   .CurrentSpeed_i(current_speed_reg),     
+   .LaneAct_i(lane_act_reg)          
+   
+   
+   
+    
    ) ;
 end
 
@@ -738,7 +767,7 @@ else
    assign a2p_mb_wraddr = 12'h0;
    assign a2p_mb_wrreq = 1'b0;
    assign pci_irqn = 1'b1;
-   assign txrp_fifo_dataout = 131'h0;
+   assign txrp_fifo_dataout = 66'h0;
    assign txrp_tlp_ready = 1'b0;
  end
 
@@ -747,35 +776,55 @@ endgenerate
    assign MsiTc_o  = 3'h0;
    assign MsiNum_o  = 5'h0;
    assign IntxReq_o = ~pci_irqn;
-
-///////////// Synch and Demux the BusDev from configuration signals
-  
-
-    //Configuration Demux logic 
+   
+   
+   // Pipeline reg for CfgCtl interface
     always @(posedge AvlClk_i or negedge rstn_reg) 
      begin
         if (rstn_reg == 0)
           begin
+            cfgctl_add_reg  <= 4'h0;
+            cfgctl_data_reg <= 32'h0;
+            lane_act_reg    <= 4'h0;
+            current_speed_reg <= 2'b00;
+          end
+        else 
+          begin
+             cfgctl_add_reg  <= CfgAddr_i;
+             cfgctl_data_reg <= CfgCtl_i;
+             lane_act_reg    <= lane_act;
+             current_speed_reg <= current_speed;
+          end
+     end            
+
+///////////// Synch and Demux the BusDev from configuration signals
+    //Synchronise to pld side 
+
+    //Configuration Demux logic 
+    always @(posedge AvlClk_i or negedge Rstn_i) 
+     begin
+        if (Rstn_i == 0)
+          begin
             cfg_busdev  <= 13'h0;
             cfg_dev_csr <= 32'h0;
-            msi_ena     <= 16'b0;  
+            msi_ena     <= 16'b0;
             msix_control <= 16'h0;
-            msi_data    <= 16'h0;    
+            msi_data    <= 16'h0;
             msi_addr    <= 64'h0;
             cfg_prmcsr  <= 16'h0;
           end
-        else
+        else 
           begin
-            cfg_busdev          <= (CfgAddr_i[3:0] == 4'hF) ? CfgCtl_i[12 : 0]  : cfg_busdev;
-            cfg_dev_csr         <= (CfgAddr_i[3:0] == 4'h0) ? {16'h0, CfgCtl_i[31 : 16]}  : cfg_dev_csr;
-            msi_ena             <= (CfgAddr_i[3:0] == 4'hD) ? CfgCtl_i[15:0]   :  msi_ena; 
-            msix_control        <= (CfgAddr_i[3:0] == 4'hD) ? CfgCtl_i[31:16]  :  msix_control; 
-            cfg_prmcsr          <= (CfgAddr_i[3:0] == 4'h3) ? CfgCtl_i[23:8]   :  cfg_prmcsr;
-            msi_addr[11:0]      <= (CfgAddr_i[3:0] == 4'h5) ? CfgCtl_i[31:20]  :  msi_addr[11:0];
-            msi_addr[31:12]     <= (CfgAddr_i[3:0] == 4'h9) ? CfgCtl_i[31:12]  :  msi_addr[31:12];
-            msi_addr[43:32]     <= (CfgAddr_i[3:0] == 4'h6) ? CfgCtl_i[31:20]  :  msi_addr[43:32];
-            msi_addr[63:44]     <= (CfgAddr_i[3:0] == 4'hB) ? CfgCtl_i[31:12]  :  msi_addr[63:44];
-            msi_data[15:0]      <= (CfgAddr_i[3:0] == 4'hF) ? CfgCtl_i[31:16]  :  msi_data[15:0];
+            cfg_busdev          <= (cfgctl_add_reg[3:0]==4'hF) ? cfgctl_data_reg[12 : 0]  : cfg_busdev;
+            cfg_dev_csr         <= (cfgctl_add_reg[3:0]==4'h0) ? {16'h0, cfgctl_data_reg[31 : 16]}  : cfg_dev_csr;
+            msi_ena             <= (cfgctl_add_reg[3:0]==4'hD) ? cfgctl_data_reg[15:0]   :  msi_ena;
+            msix_control        <= (cfgctl_add_reg[3:0] == 4'hD) ? cfgctl_data_reg[31:16]  :  msix_control; 
+            cfg_prmcsr          <= (cfgctl_add_reg[3:0]==4'h3) ? cfgctl_data_reg[23:8]   :  cfg_prmcsr;
+            msi_addr[11:0]      <= (cfgctl_add_reg[3:0]==4'h5) ? cfgctl_data_reg[31:20]  :  msi_addr[11:0];
+            msi_addr[31:12]     <= (cfgctl_add_reg[3:0]==4'h9) ? cfgctl_data_reg[31:12]  :  msi_addr[31:12];
+            msi_addr[43:32]     <= (cfgctl_add_reg[3:0]==4'h6) ? cfgctl_data_reg[31:20]  :  msi_addr[43:32];
+            msi_addr[63:44]     <= (cfgctl_add_reg[3:0]==4'hB) ? cfgctl_data_reg[31:12]  :  msi_addr[63:44];
+            msi_data[15:0]      <= (cfgctl_add_reg[3:0]==4'hF) ? cfgctl_data_reg[31:16]  :  msi_data[15:0];
           end
      end 
                

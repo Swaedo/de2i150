@@ -1,6 +1,6 @@
 EDA Netlist Writer report for master_example
-Mon Apr 20 11:14:01 2015
-Quartus II 32-bit Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Full Version
+Wed Dec 16 20:49:05 2015
+Quartus Prime Version 15.1.0 Build 185 10/21/2015 SJ Lite Edition
 
 
 ---------------------
@@ -17,26 +17,27 @@ Quartus II 32-bit Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Full Ver
 ----------------
 ; Legal Notice ;
 ----------------
-Copyright (C) 1991-2013 Altera Corporation
+Copyright (C) 1991-2015 Altera Corporation. All rights reserved.
 Your use of Altera Corporation's design tools, logic functions 
 and other software and tools, and its AMPP partner logic 
 functions, and any output files from any of the foregoing 
 (including device programming or simulation files), and any 
 associated documentation or information are expressly subject 
 to the terms and conditions of the Altera Program License 
-Subscription Agreement, Altera MegaCore Function License 
-Agreement, or other applicable license agreement, including, 
-without limitation, that your use is for the sole purpose of 
-programming logic devices manufactured by Altera and sold by 
-Altera or its authorized distributors.  Please refer to the 
-applicable agreement for further details.
+Subscription Agreement, the Altera Quartus Prime License Agreement,
+the Altera MegaCore Function License Agreement, or other 
+applicable license agreement, including, without limitation, 
+that your use is for the sole purpose of programming logic 
+devices manufactured by Altera and sold by Altera or its 
+authorized distributors.  Please refer to the applicable 
+agreement for further details.
 
 
 
 +-------------------------------------------------------------------+
 ; EDA Netlist Writer Summary                                        ;
 +---------------------------+---------------------------------------+
-; EDA Netlist Writer Status ; Successful - Mon Apr 20 11:14:01 2015 ;
+; EDA Netlist Writer Status ; Successful - Wed Dec 16 20:49:05 2015 ;
 ; Revision Name             ; master_example                        ;
 ; Top-level Entity Name     ; master_example                        ;
 ; Family                    ; Cyclone IV GX                         ;
@@ -66,42 +67,42 @@ applicable agreement for further details.
 +---------------------------------------------------------------------------------------------------+--------------------+
 
 
-+-----------------------------------------------------------------------------------------------------------------------------------------+
-; Simulation Generated Files                                                                                                              ;
-+-----------------------------------------------------------------------------------------------------------------------------------------+
-; Generated Files                                                                                                                         ;
-+-----------------------------------------------------------------------------------------------------------------------------------------+
-; /home/ecegrid/a/mg288/Desktop/de2i_150/amm_master_example/demo_master_slave/simulation/modelsim/master_example_7_1200mv_85c_slow.vo     ;
-; /home/ecegrid/a/mg288/Desktop/de2i_150/amm_master_example/demo_master_slave/simulation/modelsim/master_example_7_1200mv_0c_slow.vo      ;
-; /home/ecegrid/a/mg288/Desktop/de2i_150/amm_master_example/demo_master_slave/simulation/modelsim/master_example_min_1200mv_0c_fast.vo    ;
-; /home/ecegrid/a/mg288/Desktop/de2i_150/amm_master_example/demo_master_slave/simulation/modelsim/master_example.vo                       ;
-; /home/ecegrid/a/mg288/Desktop/de2i_150/amm_master_example/demo_master_slave/simulation/modelsim/master_example_7_1200mv_85c_v_slow.sdo  ;
-; /home/ecegrid/a/mg288/Desktop/de2i_150/amm_master_example/demo_master_slave/simulation/modelsim/master_example_7_1200mv_0c_v_slow.sdo   ;
-; /home/ecegrid/a/mg288/Desktop/de2i_150/amm_master_example/demo_master_slave/simulation/modelsim/master_example_min_1200mv_0c_v_fast.sdo ;
-; /home/ecegrid/a/mg288/Desktop/de2i_150/amm_master_example/demo_master_slave/simulation/modelsim/master_example_v.sdo                    ;
-+-----------------------------------------------------------------------------------------------------------------------------------------+
++-----------------------------------------------------------------------------------------------------------------------+
+; Simulation Generated Files                                                                                            ;
++-----------------------------------------------------------------------------------------------------------------------+
+; Generated Files                                                                                                       ;
++-----------------------------------------------------------------------------------------------------------------------+
+; C:/Users/Tiger/Documents/GitHub/de2i150/demo_master_slave/simulation/modelsim/master_example_7_1200mv_85c_slow.vo     ;
+; C:/Users/Tiger/Documents/GitHub/de2i150/demo_master_slave/simulation/modelsim/master_example_7_1200mv_0c_slow.vo      ;
+; C:/Users/Tiger/Documents/GitHub/de2i150/demo_master_slave/simulation/modelsim/master_example_min_1200mv_0c_fast.vo    ;
+; C:/Users/Tiger/Documents/GitHub/de2i150/demo_master_slave/simulation/modelsim/master_example.vo                       ;
+; C:/Users/Tiger/Documents/GitHub/de2i150/demo_master_slave/simulation/modelsim/master_example_7_1200mv_85c_v_slow.sdo  ;
+; C:/Users/Tiger/Documents/GitHub/de2i150/demo_master_slave/simulation/modelsim/master_example_7_1200mv_0c_v_slow.sdo   ;
+; C:/Users/Tiger/Documents/GitHub/de2i150/demo_master_slave/simulation/modelsim/master_example_min_1200mv_0c_v_fast.sdo ;
+; C:/Users/Tiger/Documents/GitHub/de2i150/demo_master_slave/simulation/modelsim/master_example_v.sdo                    ;
++-----------------------------------------------------------------------------------------------------------------------+
 
 
 +-----------------------------+
 ; EDA Netlist Writer Messages ;
 +-----------------------------+
 Info: *******************************************************************
-Info: Running Quartus II 32-bit EDA Netlist Writer
-    Info: Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Full Version
-    Info: Processing started: Mon Apr 20 11:13:28 2015
+Info: Running Quartus Prime EDA Netlist Writer
+    Info: Version 15.1.0 Build 185 10/21/2015 SJ Lite Edition
+    Info: Processing started: Wed Dec 16 20:48:11 2015
 Info: Command: quartus_eda --read_settings_files=off --write_settings_files=off master_example -c master_example
-Info (204019): Generated file master_example_7_1200mv_85c_slow.vo in folder "/home/ecegrid/a/mg288/Desktop/de2i_150/amm_master_example/demo_master_slave/simulation/modelsim/" for EDA simulation tool
-Info (204019): Generated file master_example_7_1200mv_0c_slow.vo in folder "/home/ecegrid/a/mg288/Desktop/de2i_150/amm_master_example/demo_master_slave/simulation/modelsim/" for EDA simulation tool
-Info (204019): Generated file master_example_min_1200mv_0c_fast.vo in folder "/home/ecegrid/a/mg288/Desktop/de2i_150/amm_master_example/demo_master_slave/simulation/modelsim/" for EDA simulation tool
-Info (204019): Generated file master_example.vo in folder "/home/ecegrid/a/mg288/Desktop/de2i_150/amm_master_example/demo_master_slave/simulation/modelsim/" for EDA simulation tool
-Info (204019): Generated file master_example_7_1200mv_85c_v_slow.sdo in folder "/home/ecegrid/a/mg288/Desktop/de2i_150/amm_master_example/demo_master_slave/simulation/modelsim/" for EDA simulation tool
-Info (204019): Generated file master_example_7_1200mv_0c_v_slow.sdo in folder "/home/ecegrid/a/mg288/Desktop/de2i_150/amm_master_example/demo_master_slave/simulation/modelsim/" for EDA simulation tool
-Info (204019): Generated file master_example_min_1200mv_0c_v_fast.sdo in folder "/home/ecegrid/a/mg288/Desktop/de2i_150/amm_master_example/demo_master_slave/simulation/modelsim/" for EDA simulation tool
-Info (204019): Generated file master_example_v.sdo in folder "/home/ecegrid/a/mg288/Desktop/de2i_150/amm_master_example/demo_master_slave/simulation/modelsim/" for EDA simulation tool
-Info: Quartus II 32-bit EDA Netlist Writer was successful. 0 errors, 0 warnings
-    Info: Peak virtual memory: 487 megabytes
-    Info: Processing ended: Mon Apr 20 11:14:02 2015
-    Info: Elapsed time: 00:00:34
-    Info: Total CPU time (on all processors): 00:00:30
+Info (204019): Generated file master_example_7_1200mv_85c_slow.vo in folder "C:/Users/Tiger/Documents/GitHub/de2i150/demo_master_slave/simulation/modelsim/" for EDA simulation tool
+Info (204019): Generated file master_example_7_1200mv_0c_slow.vo in folder "C:/Users/Tiger/Documents/GitHub/de2i150/demo_master_slave/simulation/modelsim/" for EDA simulation tool
+Info (204019): Generated file master_example_min_1200mv_0c_fast.vo in folder "C:/Users/Tiger/Documents/GitHub/de2i150/demo_master_slave/simulation/modelsim/" for EDA simulation tool
+Info (204019): Generated file master_example.vo in folder "C:/Users/Tiger/Documents/GitHub/de2i150/demo_master_slave/simulation/modelsim/" for EDA simulation tool
+Info (204019): Generated file master_example_7_1200mv_85c_v_slow.sdo in folder "C:/Users/Tiger/Documents/GitHub/de2i150/demo_master_slave/simulation/modelsim/" for EDA simulation tool
+Info (204019): Generated file master_example_7_1200mv_0c_v_slow.sdo in folder "C:/Users/Tiger/Documents/GitHub/de2i150/demo_master_slave/simulation/modelsim/" for EDA simulation tool
+Info (204019): Generated file master_example_min_1200mv_0c_v_fast.sdo in folder "C:/Users/Tiger/Documents/GitHub/de2i150/demo_master_slave/simulation/modelsim/" for EDA simulation tool
+Info (204019): Generated file master_example_v.sdo in folder "C:/Users/Tiger/Documents/GitHub/de2i150/demo_master_slave/simulation/modelsim/" for EDA simulation tool
+Info: Quartus Prime EDA Netlist Writer was successful. 0 errors, 0 warnings
+    Info: Peak virtual memory: 946 megabytes
+    Info: Processing ended: Wed Dec 16 20:49:06 2015
+    Info: Elapsed time: 00:00:55
+    Info: Total CPU time (on all processors): 00:00:54
 
 

@@ -166,6 +166,29 @@ always_comb begin
 	endcase
 end
 
+// Custom Logic
+/*
+customLogicTLD CustomTop (
+    .clk(clk),
+	.n_rst(reset_n),
+    
+	.startControlRegister(),
+	.imageWidth,
+	.imageHeight,
+	.start_addr_sdram,
+	.finish_addr_sdram,
+	.filterMode,
+	.betaValue,
+	.sdram_datareadvalid,
+    .finish_flag,
+	
+	.data_sdram,
+	.sdram_read_en,
+	.sdram_write_en,
+	.address_sdram,
+	.writeData_sdram
+); */
+
 endmodule
 
 
